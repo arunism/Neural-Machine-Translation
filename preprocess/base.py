@@ -8,6 +8,7 @@ class PreprocessBase:
     def __init__(self, config)  -> None:
         self._src_lang_header = config.SRC_LANG_HEADER
         self._dest_lang_header = config.DEST_LANG_HEADER
+        self._sequence_length = config.MAX_SEQ_LEN
     
     # The data may have some 'unicode' encoding.
     # We need to change the encoding for processing of the data.
@@ -31,3 +32,21 @@ class PreprocessBase:
         with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
         with open(i2w_file, 'rb') as file: index_to_word = pickle.load(file)
         return word_to_index, index_to_word
+    
+    def padding(self, sentence):
+        if len(sentence) > (self._sequence_length - 2):
+            padded_sent = ['<SOS>'] + sentence[:self._sequence_length - 2] + ['<EOS>']
+        else:
+            padded_sent = ['<SOS>'] +  sentence + ['<EOS>'] + ['<PAD>']*(self._sequence_length - len(sentence) - 2)
+        return padded_sent
+    
+    def all_text_to_index(self, data, w2i_file):
+        with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
+        idx = [
+            [
+                word_to_index.get(word, word_to_index['<UNK>']) 
+                for word in self.padding(sentence.split())
+            ]
+            for sentence in data
+        ]
+        return idx
