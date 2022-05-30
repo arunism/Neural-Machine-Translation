@@ -17,14 +17,14 @@ class Train:
 
         self.load_data()
         self.train_src_lang, self.train_dest_lang = self.train_data_obj.read_data(self.train_data)
-        print(self.train_src_lang[:5])
-        print(self.train_dest_lang[:5])
+        print(self.train_src_lang[-5:])
+        print(self.train_dest_lang[-5:])
 
     def load_data(self) -> None:
         self.train_data_obj = PreprocessTrain(self.config)
         self.eval_data_obj = PreprocessEval(self.config)
         self.train_data, self.eval_data = train_test_split(self.data_path)
-        print(self.train_data.head())
+        print(self.train_data.tail())
 
 
 if __name__ == '__main__':
