@@ -1,8 +1,11 @@
 import os
 import re
 import pickle
+import torch
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class PreprocessBase:
     def __init__(self, config)  -> None:
@@ -50,3 +53,8 @@ class PreprocessBase:
             for sentence in data
         ]
         return idx
+    
+    def text_to_tensor(self, data, w2i_file):
+        idx = self.all_text_to_index(data, w2i_file)
+        tensors = torch.tensor(idx, dtype=torch.long, device=device)
+        return tensors

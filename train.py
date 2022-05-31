@@ -25,6 +25,8 @@ class Train:
         self.train_src_data, self.train_dest_data = self.train_data_obj.read_data(self.train_data)
         self.src_w2i, self.src_i2w = self.train_data_obj.build_vocab(self.train_src_data, self.src_w2i_file, self.src_i2w_file)
         self.dest_w2i, self.dest_i2w = self.train_data_obj.build_vocab(self.train_dest_data, self.dest_w2i_file, self.dest_i2w_file)
+        self.src_text2idx = self.train_data_obj.text_to_tensor(self.train_src_data, self.src_w2i_file)
+        self.dest_text2idx = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
 
     def load_data(self) -> None:
         self.train_data_obj = PreprocessTrain(self.config)
