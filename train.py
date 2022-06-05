@@ -2,6 +2,7 @@ import os
 import config
 from utils.split_data import train_test_split
 from preprocess import PreprocessTrain, PreprocessEval
+from models import LstmModel
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,6 +28,9 @@ class Train:
         self.dest_w2i, self.dest_i2w = self.train_data_obj.build_vocab(self.train_dest_data, self.dest_w2i_file, self.dest_i2w_file)
         self.src_text2idx = self.train_data_obj.text_to_tensor(self.train_src_data, self.src_w2i_file)
         self.dest_text2idx = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
+        # print(self.dest_text2idx[:3])
+        # print(self.src_text2idx[:3])
+        self.model = LstmModel(self.config, 50000)
 
     def load_data(self) -> None:
         self.train_data_obj = PreprocessTrain(self.config)

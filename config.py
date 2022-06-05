@@ -5,9 +5,11 @@ LEARNING_RATE = 0.001
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
 OPTIMIZER = 'adam'
 MAX_SEQ_LEN = 35
-EMBED_SIZE = 200
-HIDDEN_SIZE = [256]
+EMBED_SIZE = 400
+HIDDEN_SIZE = 512
 BATCH_SIZE = 128
+LAYERS_COUNT = 1
+DROPOUT = float(0.5)
 VOCAB_SIZE = None
 TRAIN_TEST_SPLIT_RATIO = 0.8
 MIN_WORD_COUNT = 2
