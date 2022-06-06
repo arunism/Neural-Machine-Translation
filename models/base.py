@@ -9,5 +9,8 @@ class BaseEncoder(nn.Module):
 
 
 class BaseDecoder(nn.Module):
-    def __init__(self, config) -> None:
+    def __init__(self, config, output_size) -> None:
         super(BaseDecoder, self).__init__()
+    
+    def forward(self, x, hidden_state, cell_state):
+        raise NotImplementedError
