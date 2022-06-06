@@ -17,7 +17,9 @@ class Encoder(BaseEncoder):
         print(self.lstm)
     
     def forward(self, x):
-        pass
+        embedding = self.dropout(self.embed_layer(x))
+        output, (hidden_state, cell_state) = self.lstm(embedding)
+        return hidden_state, cell_state
 
 
 class Decoder(BaseDecoder):
