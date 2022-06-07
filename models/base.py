@@ -16,7 +16,7 @@ class BaseEncoder(nn.Module):
 
 
 class BaseDecoder(nn.Module):
-    def __init__(self, config, output_size) -> None:
+    def __init__(self, config, input_size, output_size) -> None:
         super(BaseDecoder, self).__init__()
         self.config = config
         self.input_size = input_size

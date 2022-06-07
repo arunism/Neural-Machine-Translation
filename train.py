@@ -1,5 +1,7 @@
 import os
+import torch
 import config
+from utils.logger import logger
 from utils.split_data import train_test_split
 from preprocess import PreprocessTrain, PreprocessEval
 from models import LstmModel
@@ -30,12 +32,20 @@ class Train:
         self.dest_text2idx = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
         # print(self.dest_text2idx[:3])
         # print(self.src_text2idx[:3])
-        self.model = LstmModel(self.config, 50000)
+        self.src_vocab_size = len(self.src_w2i)
+        self.dest_vocab_size = len(self.dest_w2i)
+        self.get_model()
 
     def load_data(self) -> None:
         self.train_data_obj = PreprocessTrain(self.config)
         self.eval_data_obj = PreprocessEval(self.config)
         self.train_data, self.eval_data = train_test_split(self.data_path)
+    
+    def get_model(self) -> None:
+        if self.config.MODEL.lower() == 'lstm':
+            self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size)
+        else:
+            logger.info(f'{self.config.MODEL} is not supported!')
 
 
 if __name__ == '__main__':

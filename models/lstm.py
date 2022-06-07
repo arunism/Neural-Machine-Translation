@@ -15,7 +15,7 @@ class Encoder(BaseEncoder):
 
 class Decoder(BaseDecoder):
     def __init__(self, config, input_size, output_size) -> None:
-        super(Decoder, self).__init__(config, output_size)
+        super(Decoder, self).__init__(config, input_size, output_size)
         self.lstm = nn.LSTM(self.embed_size, self.hidden_size, self.layers_count, dropout=self.dropout)
         self.fc = nn.Linear(self.hidden_size, self.output_size)
     
@@ -36,6 +36,8 @@ class LstmModel(nn.Module):
         self.output_size = output_size
         self.encoder = Encoder(self.config, self.input_size)
         self.decoder = Decoder(self.config, self.input_size, self.output_size)
+        print(self.encoder)
+        print(self.decoder)
         
     def forward(self):
         pass
