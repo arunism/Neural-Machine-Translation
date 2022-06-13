@@ -6,7 +6,7 @@ from utils.split_data import train_test_split
 from preprocess import PreprocessTrain, PreprocessEval
 from models import LstmModel
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Trainer:
     def __init__(self) -> None:
