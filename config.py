@@ -1,9 +1,10 @@
 # You can choose between ['lstm', 'lstm_atten', 'rcnn', 'textcnn', 'transformer']
 MODEL = 'lstm'
-EPOCHS = 2
+EPOCHS = 50
 LEARNING_RATE = 0.005
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
-OPTIMIZER = 'adam'
+ENCODER_OPTIMIZER = 'adam'
+DECODER_OPTIMIZER = 'adam'
 MAX_SEQ_LEN = 35
 EMBED_SIZE = 400
 HIDDEN_SIZE = 512
