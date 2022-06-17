@@ -5,13 +5,12 @@ import torch
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 class PreprocessBase:
     def __init__(self, config)  -> None:
         self._src_lang_header = config.SRC_LANG_HEADER
         self._dest_lang_header = config.DEST_LANG_HEADER
         self._sequence_length = config.MAX_SEQ_LEN
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # The data may have some 'unicode' encoding.
     # We need to change the encoding for processing of the data.
@@ -56,5 +55,5 @@ class PreprocessBase:
     
     def text_to_tensor(self, data, w2i_file):
         idx = self.all_text_to_index(data, w2i_file)
-        tensors = torch.tensor(idx, dtype=torch.long, device=device)
+        tensors = torch.tensor(idx, dtype=torch.long, device=self.device)
         return tensors

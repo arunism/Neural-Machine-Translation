@@ -28,8 +28,8 @@ class Trainer:
         self.train_src_data, self.train_dest_data = self.train_data_obj.read_data(self.train_data)
         self.src_w2i, self.src_i2w = self.train_data_obj.build_vocab(self.train_src_data, self.src_w2i_file, self.src_i2w_file)
         self.dest_w2i, self.dest_i2w = self.train_data_obj.build_vocab(self.train_dest_data, self.dest_w2i_file, self.dest_i2w_file)
-        self.src_text2idx = self.train_data_obj.text_to_tensor(self.train_src_data, self.src_w2i_file)
-        self.dest_text2idx = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
+        self.src_tensor = self.train_data_obj.text_to_tensor(self.train_src_data, self.src_w2i_file)
+        self.dest_tensor = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
 
         self.src_vocab_size = len(self.src_w2i)
         self.dest_vocab_size = len(self.dest_w2i)
@@ -45,19 +45,6 @@ class Trainer:
             self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size)
         else:
             logger.info(f'{self.config.MODEL} is not supported!')
-    
-    def get_optimizer(self):
-        if self.config.OPTIMIZER == 'adam':
-            return torch.optim.Adam(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adadelta':
-            return torch.optim.Adadelta(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'adagrad':
-            return torch.optim.Adagrad(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'rmsprop':
-            return torch.optim.RMSprop(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        elif self.config.OPTIMIZER == 'sgd':
-            return torch.optim.SGD(self.model.parameters(), lr=self.config.LEARNING_RATE)
-        return None
     
     def train(self):
         batches = len(self.train_data) // self.config.BATCH_SIZE

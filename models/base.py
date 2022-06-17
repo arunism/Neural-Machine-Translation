@@ -38,9 +38,22 @@ class BaseModel(nn.Module):
         self.config = config
         self.input_size = input_size
         self.output_size = output_size
-        self.encoder_optimizer = self.config.ENCODER_OPTIMIZER
-        self.decoder_optimizer = self.config.DECODER_OPTIMIZER
+        self.encoder_optimizer_name = self.config.ENCODER_OPTIMIZER
+        self.decoder_optimizer_name = self.config.DECODER_OPTIMIZER
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     def forward(self):
         raise NotImplementedError
+    
+    def get_optimizer(self, optimizer, model):
+        if optimizer == 'adam':
+            return torch.optim.Adam(model.parameters(), lr=self.config.LEARNING_RATE)
+        elif optimizer == 'adadelta':
+            return torch.optim.Adadelta(model.parameters(), lr=self.config.LEARNING_RATE)
+        elif optimizer == 'adagrad':
+            return torch.optim.Adagrad(model.parameters(), lr=self.config.LEARNING_RATE)
+        elif optimizer == 'rmsprop':
+            return torch.optim.RMSprop(model.parameters(), lr=self.config.LEARNING_RATE)
+        elif optimizer == 'sgd':
+            return torch.optim.SGD(model.parameters(), lr=self.config.LEARNING_RATE)
+        return None
