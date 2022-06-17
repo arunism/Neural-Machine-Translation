@@ -1,6 +1,6 @@
 # You can choose between ['lstm', 'lstm_atten', 'rcnn', 'textcnn', 'transformer']
 MODEL = 'lstm'
-EPOCHS = 50
+EPOCHS = 1
 LEARNING_RATE = 0.005
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
 ENCODER_OPTIMIZER = 'adam'
@@ -8,10 +8,11 @@ DECODER_OPTIMIZER = 'adam'
 MAX_SEQ_LEN = 35
 EMBED_SIZE = 400
 HIDDEN_SIZE = 512
-BATCH_SIZE = 128
+BATCH_SIZE = 1
 VOCAB_SIZE = None
 LAYERS_COUNT = 1
 DROPOUT = float(0.0)
+TEACHER_FORCING = 0.5
 TRAIN_TEST_SPLIT_RATIO = 0.8
 MIN_WORD_COUNT = 2
 DATA_PATH = 'data/data.csv'

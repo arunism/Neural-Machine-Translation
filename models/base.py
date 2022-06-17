@@ -9,8 +9,8 @@ class BaseEncoder(nn.Module):
         self.embed_size = self.config.EMBED_SIZE
         self.layers_count = self.config.LAYERS_COUNT
         self.hidden_size = self.config.HIDDEN_SIZE
-        self.dropout = self.config.DROPOUT
-        self.embedding = nn.Embedding(self.input_size, self.hidden_size)
+        self.dropout = nn.Dropout(self.config.DROPOUT)
+        self.embedding = nn.Embedding(self.input_size, self.embed_size)
     
     def forward(self):
         raise NotImplementedError
@@ -25,8 +25,8 @@ class BaseDecoder(nn.Module):
         self.embed_size = self.config.EMBED_SIZE
         self.layers_count = self.config.LAYERS_COUNT
         self.hidden_size = self.config.HIDDEN_SIZE
-        self.dropout = self.config.DROPOUT
-        self.embedding = nn.Embedding(self.output_size, self.hidden_size)
+        self.dropout = nn.Dropout(self.config.DROPOUT)
+        self.embedding = nn.Embedding(self.input_size, self.embed_size)
     
     def forward(self):
         raise NotImplementedError
@@ -35,9 +35,11 @@ class BaseDecoder(nn.Module):
 class BaseModel(nn.Module):
     def __init__(self, config, input_size, output_size) -> None:
         super(BaseModel, self).__init__()
+        self.loss = 0
         self.config = config
         self.input_size = input_size
         self.output_size = output_size
+        self.batch_size = self.config.BATCH_SIZE
         self.encoder_optimizer_name = self.config.ENCODER_OPTIMIZER
         self.decoder_optimizer_name = self.config.DECODER_OPTIMIZER
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -46,14 +48,14 @@ class BaseModel(nn.Module):
         raise NotImplementedError
     
     def get_optimizer(self, optimizer, model):
-        if optimizer == 'adam':
+        if optimizer.lower() == 'adam':
             return torch.optim.Adam(model.parameters(), lr=self.config.LEARNING_RATE)
-        elif optimizer == 'adadelta':
+        elif optimizer.lower() == 'adadelta':
             return torch.optim.Adadelta(model.parameters(), lr=self.config.LEARNING_RATE)
-        elif optimizer == 'adagrad':
+        elif optimizer.lower() == 'adagrad':
             return torch.optim.Adagrad(model.parameters(), lr=self.config.LEARNING_RATE)
-        elif optimizer == 'rmsprop':
+        elif optimizer.lower() == 'rmsprop':
             return torch.optim.RMSprop(model.parameters(), lr=self.config.LEARNING_RATE)
-        elif optimizer == 'sgd':
+        elif optimizer.lower() == 'sgd':
             return torch.optim.SGD(model.parameters(), lr=self.config.LEARNING_RATE)
         return None

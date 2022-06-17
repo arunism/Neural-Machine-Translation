@@ -1,5 +1,5 @@
 import os
-import torch
+import torch.nn as nn
 import config
 from utils.logger import logger
 from utils.split_data import train_test_split
@@ -47,7 +47,10 @@ class Trainer:
             logger.info(f'{self.config.MODEL} is not supported!')
     
     def train(self):
-        batches = len(self.train_data) // self.config.BATCH_SIZE
+        ignore_index = self.dest_w2i['<PAD>']
+        criterion = nn.CrossEntropyLoss(ignore_index=ignore_index)
+        # batches = len(self.train_data) // self.config.BATCH_SIZE
         for epoch in range(self.config.EPOCHS):
             print(f'Epoch: {epoch+1}/{self.config.EPOCHS}')
+            loss = self.model(self.src_tensor, self.dest_tensor, tf=self.config.TEACHER_FORCING)
             
