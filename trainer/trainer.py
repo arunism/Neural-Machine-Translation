@@ -11,6 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class Trainer:
     def __init__(self) -> None:
         self.config = config
+        self.batch_size = self.config.BATCH_SIZE
         self.data_path = self.config.DATA_PATH
         self._output_path = os.path.join(BASE_DIR, config.OUTPUT_PATH)
         if not os.path.exists(self._output_path): os.makedirs(self._output_path)
@@ -33,6 +34,7 @@ class Trainer:
 
         self.src_vocab_size = len(self.src_w2i)
         self.dest_vocab_size = len(self.dest_w2i)
+        self.data_size = len(self.src_tensor)
         self.get_model()
 
     def load_data(self) -> None:
@@ -52,5 +54,15 @@ class Trainer:
         # batches = len(self.train_data) // self.config.BATCH_SIZE
         for epoch in range(self.config.EPOCHS):
             print(f'Epoch: {epoch+1}/{self.config.EPOCHS}')
-            loss = self.model(self.src_tensor, self.dest_tensor, tf=self.config.TEACHER_FORCING)
-            
+            self.model.eval()
+            self.model.train(True)
+            # loss = self.model(self.src_tensor, self.dest_tensor, tf=self.config.TEACHER_FORCING)
+            batch = 0
+            # for i in range(0, self.data_size, self.batch_size):
+            for i in range(0, 1000, self.batch_size):
+                self.src_tensor = self.src_tensor[:1000]
+                self.dest_tensor = self.dest_tensor[:1000]
+                src_batch = self.src_tensor[i:i+self.batch_size] if self.data_size-i < self.batch_size else self.src_tensor[i:]
+                target_batch = self.dest_tensor[i:i+self.batch_size] if self.data_size-i < self.batch_size else self.dest_tensor[i:]
+                output = self.model(src_batch, target_batch, tf=self.config.TEACHER_FORCING)
+            print(output)

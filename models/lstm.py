@@ -1,3 +1,4 @@
+import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -10,9 +11,6 @@ class LstmEncoder(BaseEncoder):
     
     def forward(self, x):
         embedding = self.dropout(self.embedding(x))
-        print(embedding)
-        print(len(embedding))
-        print(len(embedding[0][0]))
         output, (hidden, cell) = self.lstm(embedding)
         return hidden, cell
 
@@ -25,9 +23,9 @@ class LstmDecoder(BaseDecoder):
         # self.softmax = nn.LogSoftmax(dim=1)
     
     def forward(self, x, hidden, cell):
-        # x = x.unsqueeze(0)
-        embedding = self.dropout(self.embedding(x)).view(1, 1, -1)
-        output, (hidden, cell) = self.lstm(embedding, hidden, cell)
+        x = x.unsqueeze(0)
+        embedding = self.dropout(self.embedding(x))
+        output, (hidden, cell) = self.lstm(embedding, (hidden, cell))
         prediction = self.fc(output)
         prediction = prediction.squeeze(0)
         return prediction, hidden, cell
@@ -42,13 +40,15 @@ class LstmModel(BaseModel):
         self.decoder_optimizer = self.get_optimizer(self.decoder_optimizer_name, self.decoder)
 
     def forward(self, src_tensor, target_tensor, tf=0.5):
-        # self.encoder_optimizer.zero_grad()
-        # self.decoder_optimizer.zero_grad()
-        target_len = target_tensor.shape[0]
-        encoder_hidden, encoder_cell = self.encoder(src_tensor)
+        # target_len = target_tensor.size(0)
+        print(target_tensor.shape)
+        target_len = 1000
+        encoder_hidden, encoder_cell = self.encoder(src_tensor[:1000])
         outputs = torch.zeros(target_len, self.batch_size, self.output_size).to(self.device)
         x = target_tensor[0]
         for i in range(target_len):
             output, hidden, cell = self.decoder(x, encoder_hidden, encoder_cell)
             outputs[i] = output[0, 0]
-        print(outputs)
+            prediction = output.argmax(1)
+            x = target_tensor[i] if random.random() < tf else prediction
+        return outputs
