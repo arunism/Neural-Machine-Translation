@@ -32,23 +32,22 @@ class LstmDecoder(BaseDecoder):
 
 
 class LstmModel(BaseModel):
-    def __init__(self, config, input_size, output_size) -> None:
-        super(LstmModel, self).__init__(config, input_size, output_size)
-        self.encoder = LstmEncoder(self.config, self.input_size)
-        self.decoder = LstmDecoder(self.config, self.input_size, self.output_size)
+    def __init__(self, config, en_input_size, de_input_size, output_size) -> None:
+        super(LstmModel, self).__init__(config, en_input_size, de_input_size, output_size)
+        self.encoder = LstmEncoder(self.config, self.en_input_size)
+        self.decoder = LstmDecoder(self.config, self.de_input_size, self.output_size)
         self.encoder_optimizer = self.get_optimizer(self.encoder_optimizer_name, self.encoder)
         self.decoder_optimizer = self.get_optimizer(self.decoder_optimizer_name, self.decoder)
 
     def forward(self, src_tensor, target_tensor, tf=0.5):
-        # target_len = target_tensor.size(0)
-        print(target_tensor.shape)
-        target_len = 1000
-        encoder_hidden, encoder_cell = self.encoder(src_tensor[:1000])
-        outputs = torch.zeros(target_len, self.batch_size, self.output_size).to(self.device)
+        target_len = target_tensor.size(0)
+        batch_len = src_tensor.size(1)
+        encoder_hidden, encoder_cell = self.encoder(src_tensor)
+        outputs = torch.zeros(target_len, batch_len, self.output_size).to(self.device)
         x = target_tensor[0]
         for i in range(target_len):
             output, hidden, cell = self.decoder(x, encoder_hidden, encoder_cell)
-            outputs[i] = output[0, 0]
+            outputs[i] = output
             prediction = output.argmax(1)
             x = target_tensor[i] if random.random() < tf else prediction
         return outputs

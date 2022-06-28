@@ -33,11 +33,12 @@ class BaseDecoder(nn.Module):
 
 
 class BaseModel(nn.Module):
-    def __init__(self, config, input_size, output_size) -> None:
+    def __init__(self, config, en_input_size, de_input_size, output_size) -> None:
         super(BaseModel, self).__init__()
         self.loss = 0
         self.config = config
-        self.input_size = input_size
+        self.en_input_size = en_input_size
+        self.de_input_size = de_input_size
         self.output_size = output_size
         self.batch_size = self.config.BATCH_SIZE
         self.encoder_optimizer_name = self.config.ENCODER_OPTIMIZER

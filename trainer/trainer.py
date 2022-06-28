@@ -1,5 +1,7 @@
 import os
+import torch
 import torch.nn as nn
+from tqdm import tqdm
 import config
 from utils.logger import logger
 from utils.split_data import train_test_split
@@ -44,7 +46,7 @@ class Trainer:
     
     def get_model(self) -> None:
         if self.config.MODEL.lower() == 'lstm':
-            self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size)
+            self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
         else:
             logger.info(f'{self.config.MODEL} is not supported!')
     
@@ -52,6 +54,7 @@ class Trainer:
         ignore_index = self.dest_w2i['<PAD>']
         criterion = nn.CrossEntropyLoss(ignore_index=ignore_index)
         # batches = len(self.train_data) // self.config.BATCH_SIZE
+        epoch_loss = 0.0
         for epoch in range(self.config.EPOCHS):
             print(f'Epoch: {epoch+1}/{self.config.EPOCHS}')
             self.model.eval()
@@ -59,10 +62,25 @@ class Trainer:
             # loss = self.model(self.src_tensor, self.dest_tensor, tf=self.config.TEACHER_FORCING)
             batch = 0
             # for i in range(0, self.data_size, self.batch_size):
-            for i in range(0, 1000, self.batch_size):
-                self.src_tensor = self.src_tensor[:1000]
-                self.dest_tensor = self.dest_tensor[:1000]
-                src_batch = self.src_tensor[i:i+self.batch_size] if self.data_size-i < self.batch_size else self.src_tensor[i:]
-                target_batch = self.dest_tensor[i:i+self.batch_size] if self.data_size-i < self.batch_size else self.dest_tensor[i:]
+            for i in tqdm(range(0, 100, self.batch_size)):
+                batch += 1
+                self.src_tensor = self.src_tensor[:100]
+                self.dest_tensor = self.dest_tensor[:100]
+                self.data_size = 100
+                src_batch = self.src_tensor[i:i+self.batch_size] if i+self.batch_size < self.data_size else self.src_tensor[i:]
+                target_batch = self.dest_tensor[i:i+self.batch_size] if i+self.batch_size < self.data_size else self.dest_tensor[i:]
+                # src_batch = torch.cat(src_batch, dim=1)
+                # target_batch = torch.cat(target_batch, dim=1)
                 output = self.model(src_batch, target_batch, tf=self.config.TEACHER_FORCING)
+                output = output.view(-1, output.size(2))
+                target = target_batch.reshape(-1)
+                optimizer = self.model.get_optimizer(self.config.OPTIMIZER, self.model)
+                optimizer.zero_grad()
+                loss = criterion(output, target)
+                loss.backward()
+                # restrict gradients from exploding
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
+                optimizer.step()
+                epoch_loss += loss.item()
             print(output)
+            print(output.shape)

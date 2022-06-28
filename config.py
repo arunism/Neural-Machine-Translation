@@ -3,12 +3,13 @@ MODEL = 'lstm'
 EPOCHS = 1
 LEARNING_RATE = 0.005
 # You can choose between ['adam', 'adadelta', 'adagrad', 'rmsprop', 'sgd']
+OPTIMIZER = 'adam'
 ENCODER_OPTIMIZER = 'adam'
 DECODER_OPTIMIZER = 'adam'
 MAX_SEQ_LEN = 35
 EMBED_SIZE = 400
 HIDDEN_SIZE = 512
-BATCH_SIZE = 2
+BATCH_SIZE = 5
 VOCAB_SIZE = None
 LAYERS_COUNT = 1
 DROPOUT = float(0.0)
