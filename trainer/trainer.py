@@ -53,17 +53,13 @@ class Trainer:
     def train(self):
         ignore_index = self.dest_w2i['<PAD>']
         criterion = nn.CrossEntropyLoss(ignore_index=ignore_index)
-        # batches = len(self.train_data) // self.config.BATCH_SIZE
         epoch_loss = 0.0
         for epoch in range(self.config.EPOCHS):
             print(f'Epoch: {epoch+1}/{self.config.EPOCHS}')
             self.model.eval()
             self.model.train(True)
-            # loss = self.model(self.src_tensor, self.dest_tensor, tf=self.config.TEACHER_FORCING)
-            batch = 0
             # for i in range(0, self.data_size, self.batch_size):
             for i in tqdm(range(0, 100, self.batch_size)):
-                batch += 1
                 self.src_tensor = self.src_tensor[:100]
                 self.dest_tensor = self.dest_tensor[:100]
                 self.data_size = 100
@@ -82,5 +78,3 @@ class Trainer:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
                 optimizer.step()
                 epoch_loss += loss.item()
-            print(output)
-            print(output.shape)

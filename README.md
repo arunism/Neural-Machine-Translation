@@ -9,6 +9,8 @@ Install required fundamental packages:
 ```
 pip3 install pandas
 pip3 install torch
+pip3 install tqdm
+pip3 install loguru
 ```
 
 ## Prepare your dataset

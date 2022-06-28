@@ -40,7 +40,6 @@ class BaseModel(nn.Module):
         self.en_input_size = en_input_size
         self.de_input_size = de_input_size
         self.output_size = output_size
-        self.batch_size = self.config.BATCH_SIZE
         self.encoder_optimizer_name = self.config.ENCODER_OPTIMIZER
         self.decoder_optimizer_name = self.config.DECODER_OPTIMIZER
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
