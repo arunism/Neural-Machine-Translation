@@ -53,7 +53,16 @@ class PreprocessBase:
         ]
         return idx
     
-    def text_to_tensor(self, data, w2i_file):
+    def all_text_to_tensors(self, data, w2i_file):
         idx = self.all_text_to_index(data, w2i_file)
         tensors = torch.tensor(idx, dtype=torch.long, device=self.device)
         return tensors
+    
+    def single_text_to_tensors(self, sentence, w2i_file):
+        with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
+        idx = [
+            word_to_index.get(word, word_to_index['<UNK>']) 
+            for word in self.padding(sentence.split())
+        ]
+        tensor = torch.tensor(idx, dtype=torch.long, device=self.device)
+        return tensor

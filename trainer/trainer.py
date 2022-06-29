@@ -34,8 +34,8 @@ class Trainer:
         self.train_src_data, self.train_dest_data = self.train_data_obj.read_data(self.train_data)
         self.src_w2i, self.src_i2w = self.train_data_obj.build_vocab(self.train_src_data, self.src_w2i_file, self.src_i2w_file)
         self.dest_w2i, self.dest_i2w = self.train_data_obj.build_vocab(self.train_dest_data, self.dest_w2i_file, self.dest_i2w_file)
-        self.src_tensor = self.train_data_obj.text_to_tensor(self.train_src_data, self.src_w2i_file)
-        self.dest_tensor = self.train_data_obj.text_to_tensor(self.train_dest_data, self.dest_w2i_file)
+        self.src_tensor = self.train_data_obj.all_text_to_tensors(self.train_src_data, self.src_w2i_file)
+        self.dest_tensor = self.train_data_obj.all_text_to_tensors(self.train_dest_data, self.dest_w2i_file)
 
         self.src_vocab_size = len(self.src_w2i)
         self.dest_vocab_size = len(self.dest_w2i)
