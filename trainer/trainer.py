@@ -1,8 +1,8 @@
 import os
+import time
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-import config
 from utils.logger import logger
 from utils.split_data import train_test_split
 from preprocess import PreprocessTrain, PreprocessEval
@@ -11,16 +11,19 @@ from models import LstmModel
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Trainer:
-    def __init__(self) -> None:
+    def __init__(self, config) -> None:
         self.config = config
         self.batch_size = self.config.BATCH_SIZE
         self.data_path = self.config.DATA_PATH
         self._output_path = os.path.join(BASE_DIR, config.OUTPUT_PATH)
-        if not os.path.exists(self._output_path): os.makedirs(self._output_path)
-        self.src_w2i_file = os.path.join(self._output_path, config.SRC_W2I_FILE)
-        self.dest_w2i_file = os.path.join(self._output_path, config.DEST_W2I_FILE)
-        self.src_i2w_file = os.path.join(self._output_path, config.SRC_I2W_FILE)
-        self.dest_i2w_file = os.path.join(self._output_path, config.DEST_I2W_FILE)
+        self._result_data_path = os.path.join(self._output_path, 'data')
+        self._result_model_path = os.path.join(self._output_path, 'models')
+        if not os.path.exists(self._result_data_path): os.makedirs(self._result_data_path)
+        if not os.path.exists(self._result_model_path): os.makedirs(self._result_model_path)
+        self.src_w2i_file = os.path.join(self._result_data_path, config.SRC_W2I_FILE)
+        self.dest_w2i_file = os.path.join(self._result_data_path, config.DEST_W2I_FILE)
+        self.src_i2w_file = os.path.join(self._result_data_path, config.SRC_I2W_FILE)
+        self.dest_i2w_file = os.path.join(self._result_data_path, config.DEST_I2W_FILE)
         self.train_data_obj = None
         self.eval_data_obj = None
         self.model = None
@@ -78,3 +81,5 @@ class Trainer:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1)
                 optimizer.step()
                 epoch_loss += loss.item()
+        model_path = os.path.join(self._result_model_path, f'{time.strftime("%Y%m%d-%H%M%S")}.pth')
+        torch.save(self.model.state_dict(), model_path)
