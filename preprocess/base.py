@@ -39,7 +39,7 @@ class PreprocessBase:
         if len(sentence) > (self._sequence_length - 2):
             padded_sent = ['<SOS>'] + sentence[:self._sequence_length - 2] + ['<EOS>']
         else:
-            padded_sent = ['<SOS>'] +  sentence + ['<EOS>'] + ['<PAD>']*(self._sequence_length - len(sentence) - 2)
+            padded_sent = ['<SOS>'] + sentence + ['<EOS>'] + ['<PAD>']*(self._sequence_length - len(sentence) - 2)
         return padded_sent
     
     def all_text_to_index(self, data, w2i_file):
@@ -58,7 +58,7 @@ class PreprocessBase:
         tensors = torch.tensor(idx, dtype=torch.long, device=self.device)
         return tensors
     
-    def single_text_to_tensors(self, sentence, w2i_file):
+    def single_text_to_tensor(self, sentence, w2i_file):
         with open(w2i_file, 'rb') as file: word_to_index = pickle.load(file)
         idx = [
             word_to_index.get(word, word_to_index['<UNK>']) 
