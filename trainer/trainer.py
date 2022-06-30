@@ -61,15 +61,9 @@ class Trainer:
             print(f'Epoch: {epoch+1}/{self.config.EPOCHS}')
             self.model.eval()
             self.model.train(True)
-            # for i in range(0, self.data_size, self.batch_size):
-            for i in tqdm(range(0, 100, self.batch_size)):
-                self.src_tensor = self.src_tensor[:100]
-                self.dest_tensor = self.dest_tensor[:100]
-                self.data_size = 100
+            for i in tqdm(range(0, self.data_size, self.batch_size)):
                 src_batch = self.src_tensor[i:i+self.batch_size] if i+self.batch_size < self.data_size else self.src_tensor[i:]
                 target_batch = self.dest_tensor[i:i+self.batch_size] if i+self.batch_size < self.data_size else self.dest_tensor[i:]
-                # src_batch = torch.cat(src_batch, dim=1)
-                # target_batch = torch.cat(target_batch, dim=1)
                 output = self.model(src_batch, target_batch, tf=self.config.TEACHER_FORCING)
                 output = output.view(-1, output.size(2))
                 target = target_batch.reshape(-1)
