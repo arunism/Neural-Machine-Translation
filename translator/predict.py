@@ -26,14 +26,16 @@ class Translator:
         self.get_model()
     
     def model_exists(self):
+        trainer = Trainer(self.config)
+        self.model = trainer.model
         if not os.path.exists(self._model_path) or not os.listdir(self._model_path):
-            trainer = Trainer(self.config)
             trainer.train()
     
     def get_model(self):
         modles_list = glob(os.path.join(self._model_path, '*'))
         most_recent_model = max(modles_list, key=os.path.getctime)
-        self.model = torch.load(most_recent_model)
+        self.model.load_state_dict(torch.load(most_recent_model, map_location=self.device))
+        self.model.eval()
     
     def predict(self, sentence):
         with open(self.dest_i2w_file, 'rb') as file: dest_i2w = pickle.load(file)
@@ -45,9 +47,9 @@ class Translator:
             with torch.no_grad():
                 output, hidden, cell = self.model.decoder(prev_word, hidden, cell)
                 prediction = output.argmax(1).item()
-            predicted_token = dest_i2w[prediction]
-            outputs.append(predicted_token)
-            if predicted_token == '<EOS>': break
+            outputs.append(prediction)
+            if dest_i2w[prediction] == '<EOS>': break
         
-        translation = ' '.join(predicted_token)
+        token_prediction = [dest_i2w[idx] for idx in outputs]
+        translation = ' '.join(token_prediction)
         return translation

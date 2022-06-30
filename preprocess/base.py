@@ -64,5 +64,5 @@ class PreprocessBase:
             word_to_index.get(word, word_to_index['<UNK>']) 
             for word in self.padding(sentence.split())
         ]
-        tensor = torch.tensor(idx, dtype=torch.long, device=self.device)
+        tensor = torch.tensor(idx, dtype=torch.long, device=self.device).unsqueeze(1)
         return tensor
