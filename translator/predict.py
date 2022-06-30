@@ -1,4 +1,5 @@
 import os
+import pickle
 import torch
 from glob import glob
 from trainer import Trainer
@@ -22,8 +23,31 @@ class Translator:
         self.model = None
 
         self.model_exists()
+        self.get_model()
     
     def model_exists(self):
         if not os.path.exists(self._model_path) or not os.listdir(self._model_path):
             trainer = Trainer(self.config)
             trainer.train()
+    
+    def get_model(self):
+        modles_list = glob(os.path.join(self._model_path, '*'))
+        most_recent_model = max(modles_list, key=os.path.getctime)
+        self.model = torch.load(most_recent_model)
+    
+    def predict(self, sentence):
+        with open(self.dest_i2w_file, 'rb') as file: dest_i2w = pickle.load(file)
+        sent_tensor = self.preprocess_obj.single_text_to_tensor(sentence, self.src_w2i_file)
+        with torch.no_grad(): hidden, cell = self.model.encoder(sent_tensor)
+        outputs = [0]
+        for i in range(self.max_seq_len):
+            prev_word = torch.LongTensor([outputs[-1]]).to(self.device)
+            with torch.no_grad():
+                output, hidden, cell = self.model.decoder(prev_word, hidden, cell)
+                prediction = output.argmax(1).item()
+            predicted_token = dest_i2w[prediction]
+            outputs.append(predicted_token)
+            if predicted_token == '<EOS>': break
+        
+        translation = ' '.join(predicted_token)
+        return translation
