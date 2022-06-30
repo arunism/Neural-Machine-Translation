@@ -20,3 +20,10 @@ class Translator:
         self.preprocess_obj = PreprocessEval(self.config)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = None
+
+        self.model_exists()
+    
+    def model_exists(self):
+        if not os.path.exists(self._model_path) or not os.listdir(self._model_path):
+            trainer = Trainer(self.config)
+            trainer.train()
