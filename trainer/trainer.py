@@ -6,7 +6,7 @@ from tqdm import tqdm
 from utils.logger import logger
 from utils.split_data import train_test_split
 from preprocess import PreprocessTrain, PreprocessEval
-from models import LstmModel
+from models import LstmModel, GruModel
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,6 +50,8 @@ class Trainer:
     def get_model(self) -> None:
         if self.config.MODEL.lower() == 'lstm':
             self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
+        elif self.config.MODEL.lower() == 'gru':
+            self.model = GruModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
         else:
             logger.info(f'{self.config.MODEL} is not supported!')
     
