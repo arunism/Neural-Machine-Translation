@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 from models.base import BaseEncoder, BaseDecoder, BaseModel
 
-class LstmAttenEncoder(BaseEncoder):
+class BiLstmEncoder(BaseEncoder):
     def __init__(self, config, input_size) -> None:
-        super(LstmAttenEncoder, self).__init__(config, input_size)
+        super(BiLstmEncoder, self).__init__(config, input_size)
         self.lstm = nn.LSTM(self.embed_size, self.hidden_size, self.layers_count, 
                             dropout=self.config.DROPOUT, bidirectional=True)
         self.fc = nn.Linear(self.hidden_size*2, self.hidden_size)
@@ -37,9 +37,9 @@ class Attention(nn.Module):
         return attention.permute(1, 2, 0)
 
 
-class LstmAttenDecoder(BaseDecoder):
+class BiLstmDecoder(BaseDecoder):
     def __init__(self, config, input_size, output_size) -> None:
-        super(LstmAttenDecoder, self).__init__(config, input_size, output_size)
+        super(BiLstmDecoder, self).__init__(config, input_size, output_size)
         self.attention = Attention(self.config)
         self.lstm = nn.LSTM(self.embed_size, self.hidden_size, self.layers_count, dropout=self.config.DROPOUT)
         self.fc = nn.Linear(self.hidden_size, self.output_size)
@@ -57,11 +57,11 @@ class LstmAttenDecoder(BaseDecoder):
         return prediction, hidden, cell
 
 
-class LstmAttenModel(BaseModel):
+class BiLstmModel(BaseModel):
     def __init__(self, config, en_input_size, de_input_size, output_size) -> None:
-        super(LstmAttenModel, self).__init__(config, en_input_size, de_input_size, output_size)
-        self.encoder = LstmAttenEncoder(self.config, self.en_input_size)
-        self.decoder = LstmAttenDecoder(self.config, self.de_input_size, self.output_size)
+        super(BiLstmModel, self).__init__(config, en_input_size, de_input_size, output_size)
+        self.encoder = BiLstmEncoder(self.config, self.en_input_size)
+        self.decoder = BiLstmDecoder(self.config, self.de_input_size, self.output_size)
         self.encoder_optimizer = self.get_optimizer(self.encoder_optimizer_name, self.encoder)
         self.decoder_optimizer = self.get_optimizer(self.decoder_optimizer_name, self.decoder)
 

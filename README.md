@@ -1,6 +1,6 @@
-# Neural Machine Translation from Nepali to English
+# Neural Machine Translation
 
-Multi-model implementation for neural machine translation.
+Multi-model implementation for neural machine translation from Nepali to English.
 
 ## Requirements
 
