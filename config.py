@@ -1,4 +1,4 @@
-# You can choose between ['lstm', 'lstm_atten', 'rcnn', 'textcnn', 'transformer']
+# You can choose between ['lstm', 'gru', 'lstm_atten']
 MODEL = 'lstm'
 EPOCHS = 1
 LEARNING_RATE = 0.005

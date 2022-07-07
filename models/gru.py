@@ -1,7 +1,6 @@
 import random
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from models.base import BaseEncoder, BaseDecoder, BaseModel
 
 class GruEncoder(BaseEncoder):
@@ -9,8 +8,8 @@ class GruEncoder(BaseEncoder):
         super(GruEncoder, self).__init__(config, input_size)
         self.gru = nn.GRU(self.embed_size, self.hidden_size, self.layers_count, dropout=self.config.DROPOUT)
     
-    def forward(self, x):
-        embedding = self.dropout(self.embedding(x))
+    def forward(self, input):
+        embedding = self.dropout(self.embedding(input))
         output, (hidden, cell) = self.gru(embedding)
         return hidden, cell
 
@@ -21,9 +20,9 @@ class GruDecoder(BaseDecoder):
         self.gru = nn.GRU(self.embed_size, self.hidden_size, self.layers_count, dropout=self.config.DROPOUT)
         self.fc = nn.Linear(self.hidden_size, self.output_size)
     
-    def forward(self, x, hidden, cell):
-        x = x.unsqueeze(0)
-        embedding = self.dropout(self.embedding(x))
+    def forward(self, input, hidden, cell):
+        input = input.unsqueeze(0)
+        embedding = self.dropout(self.embedding(input))
         output, (hidden, cell) = self.gru(embedding, (hidden, cell))
         prediction = self.fc(output)
         prediction = prediction.squeeze(0)

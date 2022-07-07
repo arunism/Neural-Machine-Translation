@@ -1,7 +1,6 @@
 import random
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from models.base import BaseEncoder, BaseDecoder, BaseModel
 
 class LstmEncoder(BaseEncoder):
@@ -9,8 +8,8 @@ class LstmEncoder(BaseEncoder):
         super(LstmEncoder, self).__init__(config, input_size)
         self.lstm = nn.LSTM(self.embed_size, self.hidden_size, self.layers_count, dropout=self.config.DROPOUT)
     
-    def forward(self, x):
-        embedding = self.dropout(self.embedding(x))
+    def forward(self, input):
+        embedding = self.dropout(self.embedding(input))
         output, (hidden, cell) = self.lstm(embedding)
         return hidden, cell
 
@@ -22,9 +21,9 @@ class LstmDecoder(BaseDecoder):
         self.fc = nn.Linear(self.hidden_size, self.output_size)
         # self.softmax = nn.LogSoftmax(dim=1)
     
-    def forward(self, x, hidden, cell):
-        x = x.unsqueeze(0)
-        embedding = self.dropout(self.embedding(x))
+    def forward(self, input, hidden, cell):
+        input = input.unsqueeze(0)
+        embedding = self.dropout(self.embedding(input))
         output, (hidden, cell) = self.lstm(embedding, (hidden, cell))
         prediction = self.fc(output)
         prediction = prediction.squeeze(0)

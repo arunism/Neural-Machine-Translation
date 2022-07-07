@@ -25,6 +25,7 @@ class BaseDecoder(nn.Module):
         self.embed_size = self.config.EMBED_SIZE
         self.layers_count = self.config.LAYERS_COUNT
         self.hidden_size = self.config.HIDDEN_SIZE
+        self.max_len = self.config.MAX_SEQ_LEN
         self.dropout = nn.Dropout(self.config.DROPOUT)
         self.embedding = nn.Embedding(self.input_size, self.embed_size)
     
