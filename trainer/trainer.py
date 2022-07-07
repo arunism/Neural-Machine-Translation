@@ -48,9 +48,11 @@ class Trainer:
         self.train_data, self.eval_data = train_test_split(self.data_path)
     
     def get_model(self) -> None:
-        if self.config.MODEL.lower() == 'lstm':
+        if self.config.MODEL.lower() == 'gru':
+            self.model = GruModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
+        elif self.config.MODEL.lower() == 'lstm':
             self.model = LstmModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
-        elif self.config.MODEL.lower() == 'gru':
+        elif self.config.MODEL.lower() == 'bilstm':
             self.model = GruModel(self.config, self.src_vocab_size, self.dest_vocab_size, self.dest_vocab_size)
         else:
             logger.info(f'{self.config.MODEL} is not supported!')
