@@ -1,4 +1,4 @@
-# You can choose between ['lstm', 'gru', 'lstm_atten']
+# You can choose between ['lstm', 'gru', 'bilstm']
 MODEL = 'lstm'
 EPOCHS = 1
 LEARNING_RATE = 0.005
