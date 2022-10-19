@@ -21,7 +21,7 @@ If you wish to go with the same dataset as here, follow the guidelines here.
 
 * Download dataset from [here](https://drive.google.com/drive/folders/1hV2W2xXTaBsW5QEMlQlqkWfjOsZCsDTG?usp=sharing)
 * Prepare your dataset with the following command:
-  `python3 main.py`
+  `python3 data.py`
 * You may delete the previous `.txt` files (be careful what you delete)
 
 Train your model with:
